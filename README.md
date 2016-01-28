@@ -1,21 +1,22 @@
 # Payum Dotpay by Pixers
 
-Integrate Payum with Dotpay api
+Integrate Payum with Dotpay API.
 
 # Get it started.
 
-Library offers additional payum gateway for dotpay service.
+Library offers additional Payum gateway for Dotpay (www.dotpay.pl) service.
 
 ## Installation
 
 The preferred way to install the library is using [composer](http://getcomposer.org/).
+
 Run:
 
 ```bash
 php composer.phar require "pixers/payum-dotpay"
 ```
 
-## Configuration
+## Symfony Integration
 
 Symfony2 - how to add officialy unsupported DotpayGateway:
 
@@ -52,10 +53,10 @@ class AcmePaymentBundle extends Bundle
 }
 ```
 
-When we like to set param URLC - URLCallback, we must additionally in dotpay panel check option - Ustawienia -> parametry URLC - turn on.
-More information: http://dotpay.pl/files/dotpay_instrukcja_techniczna.pdf page 25.
+If we'd like to set URLC parameter (URL callback), we additionally have to turn on option "Ustawienia -> parametry URLC" in Dotpay panel.
+More information: http://dotpay.pl/files/dotpay_instrukcja_techniczna.pdf (page 25).
 
-in config.yml:
+Config.yml:
 
 ```php
 payum:
