@@ -128,7 +128,6 @@ class SyncAction extends GatewayAwareAction implements ActionInterface
     }
     
     /**
-     * 
      * @param array $httpRequest
      * @throws InvalidArgumentException
      */
@@ -138,11 +137,17 @@ class SyncAction extends GatewayAwareAction implements ActionInterface
 
         // Validation
         $md5 = $this->generateDotpaySecureHash($requestData);
-        if (!isset($requestData['md5']) ||
-                $md5 != $requestData['md5'] ||
-                (isset($this->config['ip']) && $this->config['ip'] != $httpRequest->clientIp)) {
-
-            throw new InvalidArgumentException("Bad request.", 400);
+        if (!isset($requestData['md5'])) {
+            throw new InvalidArgumentException("Md5 is not set", 400);
+        }
+        if ($md5 != $requestData['md5']) {
+            throw new InvalidArgumentException("Md5 is not valid", 400);
+        }
+        if (empty($this->config['ip'])) {
+            return true;
+        }
+        if ($this->config['ip'] != $httpRequest->clientIp) {
+            throw new InvalidArgumentException("Ip does not match", 400);
         }
     }
 }
