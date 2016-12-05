@@ -18,7 +18,7 @@ php composer.phar require "pixers/payum-dotpay"
 
 ## Symfony Integration
 
-Symfony2 - how to add officialy unsupported DotpayGateway:
+### Symfony2 - how to add DotpayGateway v1.0.2 for (1.x > payum-bundle < 2.0):
 
 ```php
 <?php
@@ -73,9 +73,38 @@ payum:
                 ip: 195.150.9.37                    // this dotpay ip calls to URLC (optional)
 ```
 
+### Symfony2 - how to add DotpayGateway v2.0 for payum-bundle >= 2.0:
+
+services.yml
+
+```php
+    dotpay_checkout:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments: [Pixers\Payum\Dotpay\DotpayGatewayFactory]
+        tags:
+            - { name: payum.gateway_factory_builder, factory: dotpay }
+```
+
+Config.yml:
+
+```php
+payum:
+    gateways:
+        dotpay_checkout:
+            factory: dotpay
+            id: company_id_from_dotpay_panel
+            method: 'POST'|'GET'                // (optional) default=GET
+            URLC: '//some_url',                 // (optional)
+            url: '//some_url',                  // (optional)
+            endpoint: 'https://ssl.dotpay.pl/', // (optional)
+            type: 0|1|2|3,                      // (optional) default=3 
+            PIN: hjkert543dgt67yh,              // for URLC callbacks (must be set before in dotpay panel) (optional)
+            ip: 195.150.9.37                    // this dotpay ip calls to URLC (optional)
+```
+
 ## Resources
 
-* [Payum Documentation](http://payum.org/doc)
+* [Payum Repository](https://github.com/Payum/Payum)
 * [Dotpay Documentation](http://dotpay.pl/files/dotpay_instrukcja_techniczna.pdf)
 
 ## Author
