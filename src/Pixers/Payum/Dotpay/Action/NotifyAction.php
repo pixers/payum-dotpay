@@ -6,6 +6,7 @@ use Payum\Core\Request\Notify;
 use Payum\Core\Action\GatewayAwareAction;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Action\ActionInterface;
+use Payum\Core\Reply\HttpResponse;
 use Pixers\Payum\Dotpay\Request\Api\Sync;
 
 /**
@@ -25,6 +26,8 @@ class NotifyAction extends GatewayAwareAction implements ActionInterface
         RequestNotSupportedException::assertSupports($this, $request);
 
         $this->gateway->execute(new Sync($request->getModel()));
+        
+        throw new HttpResponse('OK', 200);
     }
 
     /**
