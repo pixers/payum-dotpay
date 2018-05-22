@@ -2,6 +2,7 @@
 
 namespace Pixers\Payum\Dotpay\Action;
 
+use function GuzzleHttp\Psr7\parse_query;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Action\GatewayAwareAction;
 use Payum\Core\Action\ActionInterface;
@@ -46,37 +47,27 @@ class SyncAction extends GatewayAwareAction implements ActionInterface
 
         $this->gateway->execute($httpRequest = new GetHttpRequest());
         $requestData = $httpRequest->request;
-
-        $this->assertRequestValid($httpRequest);
+        $this->assertRequestValid($httpRequest->clientIp, $requestData);
         
-        if ($requestData['status'] != 'OK') {
-            $model[Constants::FIELD_STATUS] = Constants::STATUS_FAILED;
-
-            return;
-        }
-
-        if ($requestData['t_status'] == Constants::DOTPAY_STATUS_NEW) {
+        
+        if ($requestData['operation_status'] == Constants::DOTPAY_STATUS_NEW) {
             $model[Constants::FIELD_STATUS] = Constants::STATUS_NEW;
         }
 
-        if ($requestData['t_status'] == Constants::DOTPAY_STATUS_SUCCESS) {
-            $model[Constants::FIELD_STATUS] = Constants::STATUS_AUTHORIZED;
+        if ($requestData['operation_status'] == Constants::DOTPAY_STATUS_COMPLETED) {
+            $model[Constants::FIELD_STATUS] = Constants::STATUS_CAPTURED;
         }
 
-        if ($requestData['t_status'] == Constants::DOTPAY_STATUS_ERROR) {
+        if ($requestData['operation_status'] == Constants::DOTPAY_STATUS_REJECTED) {
             $model[Constants::FIELD_STATUS] = Constants::STATUS_FAILED;
         }
 
-        if ($requestData['t_status'] == Constants::DOTPAY_STATUS_CANCEL) {
-            $model[Constants::FIELD_STATUS] = Constants::STATUS_CANCELED;
+        if ($requestData['operation_status'] == Constants::DOTPAY_STATUS_PROCESSING) {
+            $model[Constants::FIELD_STATUS] = Constants::STATUS_PENDING;
         }
 
-        if ($requestData['t_status'] == Constants::DOTPAY_STATUS_COMPLAINT) {
-            $model[Constants::FIELD_STATUS] = Constants::STATUS_COMPLAINT;
-        }
-
-        if (isset($requestData['t_id'])) {
-            $model['t_id'] = $requestData['t_id'];
+        if (isset($requestData['operation_number'])) {
+            $model['operation_number'] = $requestData['operation_number'];
         }
 
         if (isset($requestData['channel'])) {
@@ -108,45 +99,69 @@ class SyncAction extends GatewayAwareAction implements ActionInterface
     /**
      * 
      * @param array $requestData
-     * @return string md5
+     * @return string
      */
     protected function generateDotpaySecureHash(array $requestData = [])
     {
-        $PIN = (isset($this->config['PIN'])) ? $this->config['PIN'] : '';
-        $id = $this->config['id'];
-        $control = (isset($requestData['control'])) ? $requestData['control'] : '';
-        $t_id = (isset($requestData['t_id'])) ? $requestData['t_id'] : '';
-        $amount = (isset($requestData['amount'])) ? $requestData['amount'] : '';
-        $email = (isset($requestData['email'])) ? $requestData['email'] : '';
-        $service = (isset($requestData['service'])) ? $requestData['service'] : '';
-        $code = (isset($requestData['code'])) ? $requestData['code'] : '';
-        $username = (isset($requestData['username'])) ? $requestData['username'] : '';
-        $password = (isset($requestData['password'])) ? $requestData['password'] : '';
-        $t_status = (isset($requestData['t_status'])) ? $requestData['t_status'] : '';
+        $pin = (isset($this->config['PIN'])) ? $this->config['PIN'] : '';
+        $keys = [
+            'id',
+            'operation_number',
+            'operation_type',
+            'operation_status',
+            'operation_amount',
+            'operation_currency',
+            'operation_withdrawal_amount',
+            'operation_commission_amount',
+            'is_completed',
+            'operation_original_amount',
+            'operation_original_currency',
+            'operation_datetime',
+            'operation_related_number',
+            'control',
+            'description',
+            'email',
+            'p_info',
+            'p_email',
+            'credit_card_issuer_identification_number',
+            'credit_card_masked_number',
+            'credit_card_brand_codename',
+            'credit_card_brand_code',
+            'credit_card_id',
+            'channel',
+            'channel_country',
+            'geoip_country',
+        ];
 
-        return md5("$PIN:$id:$control:$t_id:$amount:$email:$service:$code:$username:$password:$t_status");
-    }
-    
-    /**
-     * @param array $httpRequest
-     * @throws InvalidArgumentException
-     */
-    protected function assertRequestValid($httpRequest)
-    {
-        $requestData = $httpRequest->request;
-
-        // Validation
-        $md5 = $this->generateDotpaySecureHash($requestData);
-        if (!isset($requestData['md5'])) {
-            throw new InvalidArgumentException("Md5 is not set", 400);
+        $concatData = '';
+        foreach ($keys as $key) {
+            if (isset($requestData[$key]) && strlen($requestData[$key])) {
+                $concatData .= $requestData[$key];
+            }
         }
-        if ($md5 != $requestData['md5']) {
-            throw new InvalidArgumentException("Md5 is not valid", 400);
+
+        return hash('sha256', $pin . $concatData);
+    }
+
+    /**
+     * @param $clientIp
+     * @param $requestData
+     *
+     * @return bool
+     */
+    protected function assertRequestValid($clientIp, $requestData)
+    {
+        $hash = $this->generateDotpaySecureHash($requestData);
+        if (!isset($requestData['signature'])) {
+            throw new InvalidArgumentException("signature is not set", 400);
+        }
+        if ($hash != $requestData['signature']) {
+            throw new InvalidArgumentException("signature is not valid", 400);
         }
         if (empty($this->config['ip'])) {
             return true;
         }
-        if ($this->config['ip'] != $httpRequest->clientIp) {
+        if ($this->config['ip'] != $clientIp) {
             throw new InvalidArgumentException("Ip does not match", 400);
         }
     }
