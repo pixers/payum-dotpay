@@ -2,6 +2,7 @@
 
 namespace Pixers\Payum\Dotpay\Tests\Action;
 
+use Payum\Core\Bridge\Spl\ArrayObject;
 use Pixers\Payum\Dotpay\Action\SyncAction;
 
 class SyncActionTest extends \PHPUnit_Framework_TestCase
@@ -32,7 +33,7 @@ class SyncActionTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldNotSupportNotSyncRequest()
     {
-        $action = new SyncAction([]);
+        $action = new SyncAction(new ArrayObject());
 
         $request = new \stdClass();
 
@@ -46,7 +47,7 @@ class SyncActionTest extends \PHPUnit_Framework_TestCase
      */
     public function throwIfNotSupportedRequestGivenAsArgumentForExecute()
     {
-        $action = new SyncAction([]);
+        $action = new SyncAction(new ArrayObject());
 
         $action->execute(new \stdClass());
     }

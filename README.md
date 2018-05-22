@@ -96,8 +96,8 @@ payum:
             method: 'POST'|'GET'                // (optional) default=GET
             URLC: '//some_url',                 // (optional)
             url: '//some_url',                  // (optional)
-            endpoint: 'https://ssl.dotpay.pl/', // (optional)
-            type: 0|1|2|3,                      // (optional) default=3 
+            endpoint: 'https://ssl.dotpay.pl/t2/', // (optional)
+            type: 0|2|4,                      // (optional) default=0
             PIN: hjkert543dgt67yh,              // for URLC callbacks (must be set before in dotpay panel) (optional)
             ip: 195.150.9.37                    // this dotpay ip calls to URLC (optional)
 ```

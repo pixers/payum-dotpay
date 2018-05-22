@@ -18,8 +18,8 @@ class Api
     /**
      * Dotpay api version
      */
-    const VERSION = '0.8.32';
-    const DEFAULT_ENDPOINT = 'https://ssl.dotpay.pl/';
+    const VERSION = '1.45.2.1';
+    const DEFAULT_ENDPOINT = 'https://ssl.dotpay.pl/t2/';
     
     /**
      * @var HttpClientInterface
@@ -35,7 +35,7 @@ class Api
         'url' => null,
         'endpoint' => self::DEFAULT_ENDPOINT,
         'method' => 'GET',
-        'type' => Constants::TYPE_RETURN_BUTTON_AND_NOTIFY,
+        'type' => Constants::TYPE_ONLY_RETURN_BUTTON,
         'PIN' => null,
         'ip' => null
     ];
