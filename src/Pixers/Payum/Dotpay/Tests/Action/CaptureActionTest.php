@@ -7,7 +7,6 @@ use Payum\Core\Request\Capture;
 
 class CaptureActionTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @test
      */
@@ -61,5 +60,4 @@ class CaptureActionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($action->supports($request));
     }
-
 }

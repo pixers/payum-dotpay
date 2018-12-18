@@ -8,18 +8,33 @@ use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
 use Payum\Core\Exception\InvalidArgumentException;
+use Payum\Core\Security\GenericTokenFactory;
+use Payum\Core\Security\GenericTokenFactoryAwareInterface;
+use Payum\Core\Security\GenericTokenFactoryInterface;
 use Pixers\Payum\Dotpay\Constants;
 
 /**
- * ConvertPaymentAction
- * 
+ * ConvertPaymentAction.
+ *
  * @author Michał Kanak <kanakmichal@gmail.com>
  */
-class ConvertPaymentAction implements ActionInterface
+class ConvertPaymentAction implements ActionInterface, GenericTokenFactoryAwareInterface
 {
+    /**
+     * @var GenericTokenFactory
+     */
+    protected $tokenFactory;
 
     /**
-     * {@inheritDoc}
+     * @param GenericTokenFactoryInterface $genericTokenFactory
+     */
+    public function setGenericTokenFactory(GenericTokenFactoryInterface $genericTokenFactory = null)
+    {
+        $this->tokenFactory = $genericTokenFactory;
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @param Convert $request
      */
@@ -34,36 +49,40 @@ class ConvertPaymentAction implements ActionInterface
 
         $this->validateCurrency($payment->getCurrencyCode());
 
-        $details['amount'] = bcdiv((string) $payment->getTotalAmount(), '100', 2); //dotpay format example 12.12 PLN
+        $details['amount'] = $payment->getTotalAmount(); //dotpay format example 12.12 PLN
         $details['currency'] = strtoupper($payment->getCurrencyCode());
         $details['description'] = $payment->getDescription();
+        $details['email'] = $payment->getClientEmail();
+        $details['URL'] = $request->getToken()->getAfterUrl();
+        $details['URLC'] = $this->tokenFactory->createNotifyToken($request->getToken()->getGatewayName(), $request->getToken()->getDetails())
+            ->getTargetUrl();
 
         foreach ($payment->getDetails() as $key => $detail) {
             $details[$key] = $detail;
         }
 
         $details->defaults([
-            Constants::FIELD_STATUS => Constants::STATUS_CAPTURED,
+            Constants::FIELD_STATUS => Constants::STATUS_PENDING,
         ]);
 
         $request->setResult((array) $details);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($request)
     {
         return
                 $request instanceof Convert &&
                 $request->getSource() instanceof PaymentInterface &&
-                $request->getTo() == 'array'
+                'array' == $request->getTo()
         ;
     }
 
     /**
-     * 
      * @param string $currency
+     *
      * @throws InvalidArgumentException
      */
     protected function validateCurrency($currency)
@@ -72,5 +91,4 @@ class ConvertPaymentAction implements ActionInterface
             throw new InvalidArgumentException("Currency $currency is not supported.", 400);
         }
     }
-
 }

@@ -10,17 +10,13 @@ use Pixers\Payum\Dotpay\Action\ConvertPaymentAction;
 use Pixers\Payum\Dotpay\Action\DoPaymentAction;
 use Pixers\Payum\Dotpay\Action\NotifyAction;
 use Pixers\Payum\Dotpay\Action\SyncAction;
-use Pixers\Payum\Dotpay\Api;
 
 /**
- * 
  * @author Michał Kanak <kanakmichal@gmail.com>
  */
 class DotpayGatewayFactory extends GatewayFactory
 {
-
     /**
-     * 
      * @param ArrayObject $config
      */
     protected function populateConfig(ArrayObject $config)
@@ -54,15 +50,15 @@ class DotpayGatewayFactory extends GatewayFactory
                     'URLC' => $config['URLC'],
                     'endpoint' => $config['endpoint'],
                     'method' => $config['method'],
-                    'url' => $config['url'],
+                    'URL' => $config['URL'],
                     'type' => $config['type'],
                     'PIN' => $config['PIN'],
-                    'ip' => $config['ip']
+                    'ip' => $config['ip'],
+                    'api_version' => $config['api_version'],
                 ];
 
                 return new Api($dotpayConfig, $config['payum.http_client']);
             };
         }
     }
-
 }

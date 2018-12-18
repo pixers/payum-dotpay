@@ -5,22 +5,20 @@ namespace Pixers\Payum\Dotpay;
 use Payum\Core\Bridge\Guzzle\HttpClientFactory;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\HttpClientInterface;
-use Pixers\Payum\Dotpay\Constants;
 
 /**
- * Dotpay api
+ * Dotpay api.
  *
  * @author Michał Kanak <kanakmichal@gmail.com>
  */
 class Api
 {
-
     /**
-     * Dotpay api version
+     * Dotpay api version.
      */
-    const VERSION = '0.8.32';
-    const DEFAULT_ENDPOINT = 'https://ssl.dotpay.pl/';
-    
+    const VERSION = '1.45.2.1';
+    const DEFAULT_ENDPOINT = 'https://ssl.dotpay.pl/t2/';
+
     /**
      * @var HttpClientInterface
      */
@@ -32,16 +30,16 @@ class Api
     protected $options = [
         'id' => null,
         'URLC' => null,
-        'url' => null,
+        'URL' => null,
         'endpoint' => self::DEFAULT_ENDPOINT,
         'method' => 'GET',
-        'type' => Constants::TYPE_RETURN_BUTTON_AND_NOTIFY,
+        'type' => Constants::TYPE_ONLY_RETURN_BUTTON,
         'PIN' => null,
-        'ip' => null
+        'ip' => null,
     ];
 
     /**
-     * @param array $options
+     * @param array                    $options
      * @param HttpClientInterface|null $client
      */
     public function __construct(array $options, HttpClientInterface $client = null)
@@ -53,7 +51,7 @@ class Api
         ]);
 
         $this->options = $options;
-        $this->client = $client ? : HttpClientFactory::create();
+        $this->client = $client ?: HttpClientFactory::create();
     }
 
     /**
@@ -65,12 +63,10 @@ class Api
     }
 
     /**
-     *
      * @return array
      */
     public function getApiOptions()
     {
         return $this->options;
     }
-
 }

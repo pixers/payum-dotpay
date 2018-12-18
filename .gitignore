@@ -1,5 +1,6 @@
-nbproject
 vendor/
 composer.phar
 composer.lock
 bin/
+nbproject
+.idea

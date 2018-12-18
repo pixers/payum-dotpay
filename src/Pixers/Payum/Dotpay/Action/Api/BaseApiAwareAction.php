@@ -9,14 +9,13 @@ use Pixers\Payum\Dotpay\Api;
 
 abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
 {
-
     /**
-     * @var \Dotpay\Payum\Api
+     * @var Api
      */
     protected $api;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setApi($api)
     {
@@ -26,5 +25,4 @@ abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
 
         $this->api = $api;
     }
-
 }

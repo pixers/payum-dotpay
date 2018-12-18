@@ -6,7 +6,6 @@ use Pixers\Payum\Dotpay\DotpayGatewayFactory;
 
 class OfflineGatewayFactoryTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @test
      */
@@ -55,7 +54,7 @@ class OfflineGatewayFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new DotpayGatewayFactory();
 
         $gateway = $factory->create([
-            'id' => 1
+            'id' => 1,
                 ]
         );
 
@@ -140,5 +139,4 @@ class OfflineGatewayFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('payum.factory_title', $config);
         $this->assertEquals('Dotpay', $config['payum.factory_title']);
     }
-
 }

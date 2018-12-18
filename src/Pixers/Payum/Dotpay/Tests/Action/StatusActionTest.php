@@ -9,7 +9,6 @@ use Pixers\Payum\Dotpay\Action\StatusAction;
 
 class StatusActionTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @test
      */
@@ -145,9 +144,9 @@ class StatusActionTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldMarkCanceledIfStatusSetToCanceled()
     {
-        $request = new GetBinaryStatus(array(
+        $request = new GetBinaryStatus([
             Constants::FIELD_STATUS => Constants::STATUS_CANCELED,
-        ));
+        ]);
         $request->markCanceled();
 
         $action = new StatusAction();
@@ -189,5 +188,4 @@ class StatusActionTest extends \PHPUnit_Framework_TestCase
 
         return $status;
     }
-
 }

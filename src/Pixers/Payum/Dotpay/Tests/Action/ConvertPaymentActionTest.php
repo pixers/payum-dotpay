@@ -11,7 +11,6 @@ use Pixers\Payum\Dotpay\Constants;
 
 class ConvertPaymentActionTest extends GenericActionTest
 {
-
     protected $actionClass = 'Pixers\Payum\Dotpay\Action\ConvertPaymentAction';
     protected $requestClass = 'Payum\Core\Request\Convert';
 
@@ -112,5 +111,4 @@ class ConvertPaymentActionTest extends GenericActionTest
         $this->assertArrayHasKey('foo', $details);
         $this->assertEquals('fooVal', $details['foo']);
     }
-
 }

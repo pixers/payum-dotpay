@@ -6,7 +6,6 @@ use Pixers\Payum\Dotpay\Action\NotifyAction;
 
 class NotifyActionTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @test
      */
@@ -48,5 +47,4 @@ class NotifyActionTest extends \PHPUnit_Framework_TestCase
 
         $action->execute(new \stdClass());
     }
-
 }

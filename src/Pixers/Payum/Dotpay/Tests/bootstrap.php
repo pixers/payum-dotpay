@@ -3,7 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(-1);
 
-if (!$loader = @include __DIR__ . '/../../../../../vendor/autoload.php') {
+if (!$loader = @include __DIR__.'/../../../../../vendor/autoload.php') {
     echo <<<EOM
 You must set up the project dependencies by running the following commands:
 
@@ -16,7 +16,7 @@ EOM;
 }
 
 $rc = new \ReflectionClass('Payum\Core\GatewayInterface');
-$coreDir = dirname($rc->getFileName()) . '/Tests';
+$coreDir = dirname($rc->getFileName()).'/Tests';
 
 $loader->add('Payum\Core\Tests', $coreDir);
 $loader->add('Payum\Dotpay\Tests', __DIR__);

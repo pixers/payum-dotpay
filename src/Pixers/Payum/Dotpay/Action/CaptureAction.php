@@ -10,20 +10,19 @@ use Pixers\Payum\Dotpay\Request\Api\DoPayment;
 use Pixers\Payum\Dotpay\Api;
 
 /**
- * CaptureAction
+ * CaptureAction.
  *
  * @author Michał Kanak <kanakmichal@gmail.com>
  */
 class CaptureAction extends GatewayAwareAction
 {
-
     /**
      * @var Api
      */
     protected $api;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setApi($api)
     {
@@ -35,18 +34,18 @@ class CaptureAction extends GatewayAwareAction
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function execute($request)
     {
-        /** @var $request Capture */
+        /* @var $request Capture */
         RequestNotSupportedException::assertSupports($this, $request);
 
         $this->gateway->execute($doPayment = new DoPayment($request->getModel()));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($request)
     {
@@ -55,5 +54,4 @@ class CaptureAction extends GatewayAwareAction
                 $request->getModel() instanceof \ArrayAccess
         ;
     }
-
 }
