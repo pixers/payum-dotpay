@@ -49,7 +49,7 @@ class ConvertPaymentAction implements ActionInterface, GenericTokenFactoryAwareI
 
         $this->validateCurrency($payment->getCurrencyCode());
 
-        $details['amount'] = bcdiv($payment->getTotalAmount(), 100); //dotpay format example 12.12 PLN
+        $details['amount'] = bcdiv((string) $payment->getTotalAmount(), '100', 2); //dotpay format example 12.12 PLN
         $details['currency'] = strtoupper($payment->getCurrencyCode());
         $details['description'] = $payment->getDescription();
         $details['email'] = $payment->getClientEmail();
